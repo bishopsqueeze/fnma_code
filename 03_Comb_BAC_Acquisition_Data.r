@@ -3,20 +3,33 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
 rm(list=ls())
 
 ##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
+
+##------------------------------------------------------------------
+## Define the parallel flag
+##------------------------------------------------------------------
+DOPARALLEL  <- TRUE
+
+##------------------------------------------------------------------
+## Register the clusters
+##------------------------------------------------------------------
+if (DOPARALLEL) {
+    library(doMC)
+    registerDoMC(2)
+}
+
+##-----------------------------------------------------------------------
 ## set the working directory
 ##-----------------------------------------------------------------------
-setwd("/Users/alexstephens/Development/fnma/data/bac")
-bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac"
+setwd("/Users/alexstephens/Development/fnma/data/bac/02_Processed_Acquisition_Data")
+outDirectory <- "/Users/alexstephens/Development/fnma/data/bac/03_Processed_BAC_Acquisition_Data"
 
 ##-----------------------------------------------------------------------
 ## get the acquisitions file list
@@ -27,24 +40,25 @@ file.num    <- length(file.list)
 ##-----------------------------------------------------------------------
 ## loop over all files and collect the universe of sellers
 ##-----------------------------------------------------------------------
-
 for (i in 1:file.num)
 {
     tmp.file    <- file.list[i]
     tmp.hdr     <- substr(tmp.file, 1, 6)
     load(tmp.file)
     
+    ## echo progress
+    message("processing file :: ", tmp.file)
+
     ## after the first step, union files
     if (i == 1) {
         Acquisitions_Data.bac.all <- Acquisitions_Data.bac
     } else {
-        Acquisitions_Data.bac.all <- rbind(Acquisitions_Data.bac.all, Acquisitions_Data.bac)
+        Acquisitions_Data.bac.all <- rbindlist( list(Acquisitions_Data.bac.all, Acquisitions_Data.bac), use.names=TRUE, fill=TRUE)
     }
     
     ## remove the loaded acquisitions file
     rm("Acquisitions_Data.bac")
 }
-
 
 ##-----------------------------------------------------------------------
 ## Define the data.table key (LOAN_ID) in the merged data
@@ -54,17 +68,12 @@ setkey(Acquisitions_Data.bac.all, LOAN_ID)
 ##-----------------------------------------------------------------------
 ## Save the merged data
 ##-----------------------------------------------------------------------
-save(Acquisitions_Data.bac.all, file=paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
-
-
-#########################################################################
+save(Acquisitions_Data.bac.all, file=paste0(outDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
 
 
 ##-----------------------------------------------------------------------
 ## Tabulate basic stats
 ##-----------------------------------------------------------------------
-
-##load(paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
 
 ## create a numeric origination year
 Acquisitions_Data.bac.all$ORIG_YY <- as.integer(Acquisitions_Data.bac.all[,substr(ORIG_DTE,4,8)])

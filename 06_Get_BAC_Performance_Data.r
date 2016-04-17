@@ -98,7 +98,8 @@ backfill_UPB <- function(x) {
 ## set the working directory
 ##-----------------------------------------------------------------------
 setwd("/Users/alexstephens/Development/fnma/data/proc")
-bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac"
+bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac/03_Processed_BAC_Acquisition_Data"
+outDirectory <- "/Users/alexstephens/Development/fnma/data/bac/06_Processed_Performance_Data"
 
 ##-----------------------------------------------------------------------
 ## get the performance file list
@@ -181,7 +182,7 @@ for (i in 1:1) {
     ##-----------------------------------------------------------------------
     ## save the raw subsetted data
     ##-----------------------------------------------------------------------
-    save(Data_P, file=paste0(bacDirectory,"/",tmp.perf))
+    save(Data_P, file=paste0(outDirectory,"/",tmp.perf))
 
     ## remove the main file from memory
     rm("Performance_Data")
@@ -304,7 +305,7 @@ for (i in 1:1) {
     ##-----------------------------------------------------------------------
     ## save the loss data
     ##-----------------------------------------------------------------------
-    save(Loss_P, file=paste0(bacDirectory,"/",tmp.loss))
+    save(Loss_P, file=paste0(outDirectory,"/",tmp.loss))
 
 
     ##-----------------------------------------------------------------------
@@ -368,7 +369,7 @@ for (i in 1:1) {
     ##-----------------------------------------------------------------------
     ## save the default data
     ##-----------------------------------------------------------------------
-    save(Data_P, file=paste0(bacDirectory,"/",tmp.default))
+    save(Data_P, file=paste0(outDirectory,"/",tmp.default))
 
     ##-----------------------------------------------------------------------
     ## Create a combined acquisitions/performance data file
@@ -439,12 +440,12 @@ for (i in 1:1) {
     Data_C[, c("CLTV") := 100*FIN_UPB/((RPT_IDX/ORIG_IDX)*ORIG_VAL)]
     Data_C[, c("CURR_VAL") := ORIG_VAL*(RPT_IDX/ORIG_IDX)]
  
-    Data_C[, c("HPI_KEY_RPT","HPI_KEY_ORIG", "HPI_KEY_FMOD", "UNEMP_KEY") := NULL]
+    Data_C[, c("HPI_KEY_RPT","HPI_KEY_ORIG", "HPI_KEY_FMOD", "UNEMP_KEY", "UNEMP_KEY_ORIG") := NULL]
  
     ##-----------------------------------------------------------------------
     ## save the default data
     ##-----------------------------------------------------------------------
-    save(Data_C, file=paste0(bacDirectory,"/",tmp.comb))
+    save(Data_C, file=paste0(outDirectory,"/",tmp.comb))
 
     ## clean-up for the next loop
     # rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")

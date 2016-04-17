@@ -3,14 +3,14 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
 rm(list=ls())
+
+##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
 
 ##------------------------------------------------------------------
 ## Define the parallel flag
@@ -28,10 +28,10 @@ if (DOPARALLEL) {
 ##-----------------------------------------------------------------------
 ## set the working directory
 ##-----------------------------------------------------------------------
-setwd("/Users/alexstephens/Development/fnma/data/bac")
-bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac"
-vinDirectory <- "/Users/alexstephens/Development/fnma/data/bac/vintage"
-cohDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort"
+setwd("/Users/alexstephens/Development/fnma/data/bac/06_Processed_Performance_Data")
+bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac/06_Processed_Performance_Data"
+vinDirectory <- "/Users/alexstephens/Development/fnma/data/bac/07_Split_BAC_Data_By_Vintage"
+cohDirectory <- "/Users/alexstephens/Development/fnma/data/bac/07_Split_BAC_Data_By_Cohort"
 
 ##-----------------------------------------------------------------------
 ## get the base BAC default file list
@@ -61,8 +61,7 @@ for (i in 1:file.year.num) {
     ##-----------------------------------------------------------------------
     ## concat all 4 quarters
     ##-----------------------------------------------------------------------
-    system.time({
-        for (j in 1:4)
+    for (j in 1:4)
         {
             load(file=paste0(yy,"Q",j,"_Combined_Data_BAC.Rda"))
             
@@ -74,15 +73,13 @@ for (i in 1:file.year.num) {
             rm("Data_C")
         }
         save(Tmp_C, file=paste0(vinDirectory,"/",yy,"V","_Combined_Data_BAC.Rda"))
-    })
     
     ##-----------------------------------------------------------------------
     ## split by observation date into separate files
     ##-----------------------------------------------------------------------
     date.vec        <- Tmp_C[,unique(Monthly.Rpt.Prd)]
     date.vec.num    <- length(date.vec)
-    system.time({
-        for (k in 1:date.vec.num)
+    for (k in 1:date.vec.num)
         {
             tmp.date    <- date.vec[k]
             tmp.mm      <- month(tmp.date)
@@ -93,7 +90,6 @@ for (i in 1:file.year.num) {
             
             save(Data_C, file=paste0(cohDirectory,"/",tmp.hdr))
         }
-    })
     
 }
 
