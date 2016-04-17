@@ -94,7 +94,6 @@ backfill_UPB <- function(x) {
     }
 }
 
-
 ##-----------------------------------------------------------------------
 ## set the working directory
 ##-----------------------------------------------------------------------
@@ -131,8 +130,7 @@ load(paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
 ## loop over all performance files and produce different subsets
 ##-----------------------------------------------------------------------
 for (i in 1:1) {
-#for (i in 1:file.num) {
-#foreach (i=1:file.num) %dopar% {
+    #foreach (i=1:file.num) %dopar% {
     
     tmp.file    <- file.list[i]                 ## filename
     tmp.hdr     <- substr(tmp.file, 1, 6)       ## origination header
@@ -395,8 +393,12 @@ for (i in 1:1) {
     setkey(Data_P, LOAN_ID)
     Data_C = as.data.table(merge(Data_A, Data_P, by.x = "LOAN_ID", by.y = "LOAN_ID", all = TRUE))
  
+    ##-----------------------------------------------------------------------
     ## Append Unemployment
-    Data_C[ , UNEMP_KEY := paste0(year(Monthly.Rpt.Prd), month(Monthly.Rpt.Prd), STATE)]
+    ##-----------------------------------------------------------------------
+    
+    ## Unemp as of the report date
+    Data_C[ , c("UNEMP_KEY") := paste0(year(Monthly.Rpt.Prd), month(Monthly.Rpt.Prd), STATE)]
     Data_C$UNEMP     <- unemp[Data_C[,UNEMP_KEY], value]
     Data_C$UNEMP_1Q  <- unemp[Data_C[,UNEMP_KEY], LAG_1Q]
     Data_C$UNEMP_2Q  <- unemp[Data_C[,UNEMP_KEY], LAG_2Q]
@@ -405,7 +407,16 @@ for (i in 1:1) {
     Data_C$UNEMP_8Q  <- unemp[Data_C[,UNEMP_KEY], LAG_8Q]
     Data_C$UNEMP_12Q <- unemp[Data_C[,UNEMP_KEY], LAG_12Q]
 
+
+    ## Unemp as of the origination date
+    Data_C[, c("UNEMP_KEY_ORIG"):= paste0(year(ORIG_DTE), month(ORIG_DTE), STATE) ]
+    Data_C$ORIG_UNEMP <- unemp[Data_C[,UNEMP_KEY_ORIG], value]
+
+    ##-----------------------------------------------------------------------
     ## merge HPI data onto the combined data
+    ##-----------------------------------------------------------------------
+    
+    ## HPI as of the report date
     Data_C[, c("HPI_KEY_RPT"):= paste0(ZIP_3,year(Monthly.Rpt.Prd),quarter(Monthly.Rpt.Prd)) ]
     Data_C$RPT_IDX    <- hpi[Data_C[,HPI_KEY_RPT], Index]
     Data_C$RPT_IDX_1Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_1Q]
@@ -415,15 +426,17 @@ for (i in 1:1) {
     Data_C$RPT_IDX_8Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_8Q]
     Data_C$RPT_IDX_12Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_12Q]
 
-
+    ## HPI as of the origination date
     Data_C[, c("HPI_KEY_ORIG"):= paste0(ZIP_3,year(ORIG_DTE),quarter(ORIG_DTE)) ]
     Data_C$ORIG_IDX <- hpi[Data_C[,HPI_KEY_ORIG], Index]
 
+    ## HPI as of the modification date
     Data_C[, MOD_DTE := as.Date(ifelse( is.na(FMOD_DTE), ORIG_DTE, FMOD_DTE))]
     Data_C[, c("HPI_KEY_FMOD"):= paste0(ZIP_3,year(MOD_DTE),quarter(MOD_DTE)) ]
     Data_C$MOD_IDX <- hpi[Data_C[,HPI_KEY_FMOD], Index]
 
-    Data_C[, c("CLTV") := 100*LAST_UPB/((RPT_IDX/ORIG_IDX)*ORIG_VAL)]
+    ## refresh CLTV estimates
+    Data_C[, c("CLTV") := 100*FIN_UPB/((RPT_IDX/ORIG_IDX)*ORIG_VAL)]
     Data_C[, c("CURR_VAL") := ORIG_VAL*(RPT_IDX/ORIG_IDX)]
  
     Data_C[, c("HPI_KEY_RPT","HPI_KEY_ORIG", "HPI_KEY_FMOD", "UNEMP_KEY") := NULL]
@@ -434,6 +447,6 @@ for (i in 1:1) {
     save(Data_C, file=paste0(bacDirectory,"/",tmp.comb))
 
     ## clean-up for the next loop
-    #rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")
+    # rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")
 }
 
