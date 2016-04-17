@@ -3,14 +3,14 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
 rm(list=ls())
+
+##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
 
 ##------------------------------------------------------------------
 ## Define the parallel flag
@@ -130,9 +130,9 @@ load(paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
 ##-----------------------------------------------------------------------
 ## loop over all performance files and produce different subsets
 ##-----------------------------------------------------------------------
-#for (i in 1:1) {
+for (i in 1:1) {
 #for (i in 1:file.num) {
-foreach (i=1:file.num) %dopar% {
+#foreach (i=1:file.num) %dopar% {
     
     tmp.file    <- file.list[i]                 ## filename
     tmp.hdr     <- substr(tmp.file, 1, 6)       ## origination header
@@ -397,11 +397,24 @@ foreach (i=1:file.num) %dopar% {
  
     ## Append Unemployment
     Data_C[ , UNEMP_KEY := paste0(year(Monthly.Rpt.Prd), month(Monthly.Rpt.Prd), STATE)]
-    Data_C$UNEMP <- unemp[Data_C[,UNEMP_KEY], value]
- 
+    Data_C$UNEMP     <- unemp[Data_C[,UNEMP_KEY], value]
+    Data_C$UNEMP_1Q  <- unemp[Data_C[,UNEMP_KEY], LAG_1Q]
+    Data_C$UNEMP_2Q  <- unemp[Data_C[,UNEMP_KEY], LAG_2Q]
+    Data_C$UNEMP_3Q  <- unemp[Data_C[,UNEMP_KEY], LAG_3Q]
+    Data_C$UNEMP_4Q  <- unemp[Data_C[,UNEMP_KEY], LAG_4Q]
+    Data_C$UNEMP_8Q  <- unemp[Data_C[,UNEMP_KEY], LAG_8Q]
+    Data_C$UNEMP_12Q <- unemp[Data_C[,UNEMP_KEY], LAG_12Q]
+
     ## merge HPI data onto the combined data
     Data_C[, c("HPI_KEY_RPT"):= paste0(ZIP_3,year(Monthly.Rpt.Prd),quarter(Monthly.Rpt.Prd)) ]
-    Data_C$RPT_IDX <- hpi[Data_C[,HPI_KEY_RPT], Index]
+    Data_C$RPT_IDX    <- hpi[Data_C[,HPI_KEY_RPT], Index]
+    Data_C$RPT_IDX_1Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_1Q]
+    Data_C$RPT_IDX_2Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_2Q]
+    Data_C$RPT_IDX_3Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_3Q]
+    Data_C$RPT_IDX_4Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_4Q]
+    Data_C$RPT_IDX_8Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_8Q]
+    Data_C$RPT_IDX_12Q <- hpi[Data_C[,HPI_KEY_RPT], LAG_12Q]
+
 
     Data_C[, c("HPI_KEY_ORIG"):= paste0(ZIP_3,year(ORIG_DTE),quarter(ORIG_DTE)) ]
     Data_C$ORIG_IDX <- hpi[Data_C[,HPI_KEY_ORIG], Index]
@@ -421,6 +434,6 @@ foreach (i=1:file.num) %dopar% {
     save(Data_C, file=paste0(bacDirectory,"/",tmp.comb))
 
     ## clean-up for the next loop
-    rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")
+    #rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")
 }
 

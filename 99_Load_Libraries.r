@@ -8,7 +8,7 @@ if (!(require(reshape2))) install.packages ("reshape2")
 if (!(require(xtable))) install.packages ("xtable")
 if (!(require(zoo))) install.packages ("zoo")
 if (!(require(ggplot2))) install.packages ("ggplot2")
-
+if (!(require(splines))) install.packages ("splines")
 
 ##-----------------------------------------------------------------------
 ## Multiple plot function
@@ -56,5 +56,20 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
             print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
             layout.pos.col = matchidx$col))
         }
+    }
+}
+
+##-----------------------------------------------------------------------
+## <function> panel_lag
+##-----------------------------------------------------------------------
+## permit lagging/leading of column variables in data.table
+##-----------------------------------------------------------------------
+panel_lag <- function(var, k) {
+    if (k > 0) {
+        # Bring past values forward k times
+        return(c(rep(NA, k), head(var, -k)))
+    } else {
+        # Bring future values backward
+        return(c(tail(var, k), rep(NA, -k)))
     }
 }

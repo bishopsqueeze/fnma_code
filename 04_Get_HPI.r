@@ -3,15 +3,14 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
 rm(list=ls())
 
+##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
 
 ##-----------------------------------------------------------------------
 ## set the working directory
@@ -37,13 +36,26 @@ hpi.raw             <- read.csv(file=hpi.file, header=TRUE, colClasses=c("charac
 colnames(hpi.raw)   <- c("ZIP_3", "Year", "Qtr", "Index", "Index.Type")
 
 ##-----------------------------------------------------------------------
-## create a date field; Order the results
+## create a date field
 ##-----------------------------------------------------------------------
 hpi                 <- as.data.table(hpi.raw)
 hpi$HPI_DTE         <- as.Date(paste0(3*hpi$Qtr,"/01/",hpi$Year), "%m/%d/%Y")       ## origination date
 hpi$Key             <- paste(hpi$ZIP_3, paste(hpi$Year, hpi$Qtr, sep=""), sep="")   ## key
 
+##-----------------------------------------------------------------------
+## create lagged variables
+##-----------------------------------------------------------------------
+setorderv(hpi, c("ZIP_3", "HPI_DTE"))
+hpi[, LAG_1Q:=panel_lag(Index,1), by="ZIP_3"]  ## "ZZ" is an absorbing state
+hpi[, LAG_2Q:=panel_lag(Index,2), by="ZIP_3"]  ## "ZZ" is an absorbing state
+hpi[, LAG_3Q:=panel_lag(Index,3), by="ZIP_3"]  ## "ZZ" is an absorbing state
+hpi[, LAG_4Q:=panel_lag(Index,4), by="ZIP_3"]  ## "ZZ" is an absorbing state
+hpi[, LAG_8Q:=panel_lag(Index,8), by="ZIP_3"]  ## "ZZ" is an absorbing state
+hpi[, LAG_12Q:=panel_lag(Index,12), by="ZIP_3"]  ## "ZZ" is an absorbing state
+
+##-----------------------------------------------------------------------
 ## define keys
+##-----------------------------------------------------------------------
 setorderv(hpi, c("ZIP_3", "HPI_DTE"))
 setkey(hpi, "Key")
 
@@ -51,7 +63,6 @@ setkey(hpi, "Key")
 ## drop redundant variables and set the key
 ##-----------------------------------------------------------------------
 hpi[,c("Index.Type") := NULL]
-
 
 
 ##-----------------------------------------------------------------------
@@ -63,7 +74,6 @@ hpi[,c("Index.Type") := NULL]
 ##-----------------------------------------------------------------------
 bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac"
 load(paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
-
 
 ## tabulate the two sets of zip3
 bac.zip3    <- Acquisitions_Data.bac.all[,table(ZIP_3)]
