@@ -3,21 +3,21 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
+
+##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
 
 ##-----------------------------------------------------------------------
 ## set the working & output directories
 ##-----------------------------------------------------------------------
-odadDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort_odad"
-modsDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort_mods"
-outDirectory <- "/Users/alexstephens/Development/fnma/data/bac/results"
+odadDirectory <- "/Users/alexstephens/Development/fnma/data/bac/09_ODAD_BAC_Data_By_Cohort"
+modsDirectory <- "/Users/alexstephens/Development/fnma/data/bac/09_MODS_BAC_Data_By_Cohort"
+outDirectory <- "/Users/alexstephens/Development/fnma/data/bac/20_ODAD_NonOverlap"
 
 odad.list   <- list()
 odad.loan   <- list()

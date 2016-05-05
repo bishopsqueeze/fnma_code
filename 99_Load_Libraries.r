@@ -9,6 +9,10 @@ if (!(require(xtable))) install.packages ("xtable")
 if (!(require(zoo))) install.packages ("zoo")
 if (!(require(ggplot2))) install.packages ("ggplot2")
 if (!(require(splines))) install.packages ("splines")
+if (!(require(caret))) install.packages ("caret")
+if (!(require(logistf))) install.packages ("logistf")
+if (!(require(ROCR))) install.packages ("ROCR")
+if (!(require(MASS))) install.packages ("MASS")
 
 ##-----------------------------------------------------------------------
 ## Multiple plot function

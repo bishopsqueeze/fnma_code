@@ -3,14 +3,14 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
+
+##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
 
 ##------------------------------------------------------------------
 ## Define the parallel flag
@@ -28,9 +28,9 @@ if (DOPARALLEL) {
 ##-----------------------------------------------------------------------
 ## set the working & output directories
 ##-----------------------------------------------------------------------
-setwd("/Users/alexstephens/Development/fnma/data/bac/cohort")
-cohDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort"
-outDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort_proc"
+setwd("/Users/alexstephens/Development/fnma/data/bac/07_Split_BAC_Data_By_Cohort")
+cohDirectory <- "/Users/alexstephens/Development/fnma/data/bac/07_Split_BAC_Data_By_Cohort"
+outDirectory <- "/Users/alexstephens/Development/fnma/data/bac/08_Combine_BAC_Data_By_Cohort"
 
 ##-----------------------------------------------------------------------
 ## get the input files
@@ -51,7 +51,6 @@ file.coh.num    <- length(file.coh)
 ## these files and combine all data into a single file for each monthly
 ## cohort ... with the goal of creating something akin to what is done @BAC
 ##-----------------------------------------------------------------------
-#for (i in 1:file.coh.num) {
 foreach (i=1:file.coh.num) %dopar% {
     
     ## set-up
@@ -66,14 +65,13 @@ foreach (i=1:file.coh.num) %dopar% {
     ## loop over all cohort-vintage files and concat into a single data.table
     ##-----------------------------------------------------------------------
     for (j in 1:read.num) {
-    #foreach (i=1:read.num) %dopar% {
     
         load(file=read.list[j])
      
         if (j == 1) {
             Tmp_C = Data_C
         } else {
-            Tmp_C = rbind(Tmp_C, Data_C)
+            Tmp_C = rbindlist( list(Tmp_C, Data_C), use.names=TRUE, fill=TRUE)
         }
         
     rm("Data_C")

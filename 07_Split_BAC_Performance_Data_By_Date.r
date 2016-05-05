@@ -5,7 +5,7 @@
 ##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
 
 ##-----------------------------------------------------------------------
 ## load libraries
@@ -51,8 +51,6 @@ file.year.num   <- length(file.year)
 ## combine all originations from a single year
 ##-----------------------------------------------------------------------
 for (i in 1:file.year.num) {
-##foreach (i=1:file.num) %dopar% {
-##for (i in 1:1) {
 
     yy <- file.year[i]
     
@@ -68,7 +66,7 @@ for (i in 1:file.year.num) {
             if (j == 1) {
                 Tmp_C = Data_C
             } else {
-                Tmp_C = rbind(Tmp_C, Data_C)
+                Tmp_C = rbindlist( list(Tmp_C, Data_C), use.names=TRUE, fill=TRUE )
             }
             rm("Data_C")
         }

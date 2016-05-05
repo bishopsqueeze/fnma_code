@@ -5,7 +5,7 @@
 ##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
 
 ##-----------------------------------------------------------------------
 ## load libraries
@@ -130,8 +130,7 @@ load(paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
 ##-----------------------------------------------------------------------
 ## loop over all performance files and produce different subsets
 ##-----------------------------------------------------------------------
-for (i in 1:1) {
-    #foreach (i=1:file.num) %dopar% {
+for (i in 1:file.num) {
     
     tmp.file    <- file.list[i]                 ## filename
     tmp.hdr     <- substr(tmp.file, 1, 6)       ## origination header
@@ -448,6 +447,6 @@ for (i in 1:1) {
     save(Data_C, file=paste0(outDirectory,"/",tmp.comb))
 
     ## clean-up for the next loop
-    # rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")
+    rm("Loss_P","Data_P","Data_A","Data_C","First_CE","First_D180","First_PP","First_REPO","FMOD_DTE","MOD_CE","MOD_D180")
 }
 

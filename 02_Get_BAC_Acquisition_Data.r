@@ -5,7 +5,7 @@
 ##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
 
 ##-----------------------------------------------------------------------
 ## load libraries
@@ -61,6 +61,9 @@ foreach (i=1:file.num) %dopar% {
     tmp.out     <- paste0(tmp.hdr, "_Acquisitions_Data_BAC.Rda")
     load(tmp.file)
     
+    ## echo progress
+    message("processing file :: ", tmp.file)
+
     ## Extract the acquisition data
     Acquisitions_Data.bac <- Acquisitions_Data[Seller.Name == bank_fullName]
     

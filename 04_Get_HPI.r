@@ -5,7 +5,7 @@
 ##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
 
 ##-----------------------------------------------------------------------
 ## load libraries
@@ -72,7 +72,7 @@ hpi[,c("Index.Type") := NULL]
 ##-----------------------------------------------------------------------
 ## Load the BAC acquisitions data;  Will use to map ZIP_3 to State
 ##-----------------------------------------------------------------------
-bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac"
+bacDirectory <- "/Users/alexstephens/Development/fnma/data/bac/03_Processed_BAC_Acquisition_Data"
 load(paste0(bacDirectory,"/","Acquisitions_Data_BAC_All.Rda"))
 
 ## tabulate the two sets of zip3

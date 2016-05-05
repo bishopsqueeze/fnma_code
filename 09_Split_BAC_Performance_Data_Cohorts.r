@@ -3,14 +3,14 @@
 ##-----------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------
-## load libraries
-##-----------------------------------------------------------------------
-source("/Users/alexstephens/Development/fnma/code/99_Load_Libraries.r")
-
-##-----------------------------------------------------------------------
 ## clean the cache
 ##-----------------------------------------------------------------------
-rm(list=ls())
+#rm(list=ls())
+
+##-----------------------------------------------------------------------
+## load libraries
+##-----------------------------------------------------------------------
+source("/Users/alexstephens/Development/fnma/fnma_code/99_Load_Libraries.r")
 
 ##------------------------------------------------------------------
 ## Define the parallel flag
@@ -28,10 +28,10 @@ if (DOPARALLEL) {
 ##-----------------------------------------------------------------------
 ## set the working & output directories
 ##-----------------------------------------------------------------------
-setwd("/Users/alexstephens/Development/fnma/data/bac/cohort_proc")
-cohDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort_proc"
-odadDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort_odad"
-modsDirectory <- "/Users/alexstephens/Development/fnma/data/bac/cohort_mods"
+setwd("/Users/alexstephens/Development/fnma/data/bac/08_Combine_BAC_Data_By_Cohort")
+cohDirectory <- "/Users/alexstephens/Development/fnma/data/bac/08_Combine_BAC_Data_By_Cohort"
+odadDirectory <- "/Users/alexstephens/Development/fnma/data/bac/09_ODAD_BAC_Data_By_Cohort"
+modsDirectory <- "/Users/alexstephens/Development/fnma/data/bac/09_MODS_BAC_Data_By_Cohort"
 
 ##-----------------------------------------------------------------------
 ## get the input files
